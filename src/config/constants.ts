@@ -97,8 +97,8 @@ export const VALORES_ESPERADOS = [
 // Matriz Oficial de Evaluación Interna
 export const MATRIZ_EVALUACION: Record<string, MatrizNivelInfo> = {
   "Nivel 1: Inicial / Disperso": {
-    badge_color: "#EF4444",
-    bg_color: "rgba(239, 68, 68, 0.12)",
+    badge_color: "#E05D52",
+    bg_color: "rgba(224, 93, 82, 0.14)",
     criterio: "Uso intensivo de planillas aisladas, datos en papel, reportes manuales lentos.",
     solucion: "Normalización y Tablero Base: Limpieza de datos + conexión de planillas a Looker Studio / Power BI con métricas comerciales directas.",
     prioridades_clave: [
@@ -109,8 +109,8 @@ export const MATRIZ_EVALUACION: Record<string, MatrizNivelInfo> = {
     ]
   },
   "Nivel 2: Operativo / Estructurado": {
-    badge_color: "#F59E0B",
-    bg_color: "rgba(245, 158, 11, 0.12)",
+    badge_color: "#BFA898",
+    bg_color: "rgba(191, 168, 152, 0.20)",
     criterio: "Cuentan con ERP o facturación centralizada, pero reportan en Excel manual.",
     solucion: "Pipeline y Data Modeling: Conexión a la base de datos o exportaciones automáticas + Tablero Ejecutivo de KPIs estratégicos.",
     prioridades_clave: [
@@ -121,8 +121,8 @@ export const MATRIZ_EVALUACION: Record<string, MatrizNivelInfo> = {
     ]
   },
   "Nivel 3: Avanzado / Preparado": {
-    badge_color: "#10B981",
-    bg_color: "rgba(16, 185, 129, 0.12)",
+    badge_color: "#3B8AC4",
+    bg_color: "rgba(59, 138, 196, 0.15)",
     criterio: "Datos integrados y actualizados, buscan autonomía y exploración profunda.",
     solucion: "BI Integral & Analítica Predictiva: Tableros drill-down multidimensionales, alertas automáticas y preparación para modelos de IA.",
     prioridades_clave: [

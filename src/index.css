@@ -6,8 +6,70 @@
   }
 
   body {
-    background-color: #f8fafc;
-    color: #0f172a;
-    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    background-color: #F5F8FB;
+    color: #1E252D;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    -webkit-font-smoothing: antialiased;
   }
+
+  h1, h2, h3, h4, h5, h6, .font-heading {
+    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+    letter-spacing: 0.02em;
+  }
+}
+
+/* Propeller Rotation Animation */
+@keyframes spin-propeller {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-propeller {
+  animation: spin-propeller 1.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+/* Glassmorphism Top Bar */
+.glass-header {
+  background-color: rgba(245, 248, 251, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid #E4ECF2;
+}
+
+/* Aero UI Utility Classes */
+.btn-primary {
+  background-color: #3B8AC4;
+  color: #FFFFFF;
+  border-radius: 12px;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  box-shadow: 0px 4px 12px rgba(59, 138, 196, 0.25);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: #3277AB;
+  box-shadow: 0px 6px 16px rgba(59, 138, 196, 0.35);
+  transform: translateY(-1px);
+}
+
+.btn-primary:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.card-aero {
+  background-color: #FFFFFF;
+  border: 1px solid #E4ECF2;
+  border-radius: 16px;
+  box-shadow: 0px 2px 8px rgba(30, 37, 45, 0.04);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card-aero-hover:hover {
+  border-color: #7EBCE6;
+  box-shadow: 0px 6px 20px rgba(59, 138, 196, 0.08);
 }

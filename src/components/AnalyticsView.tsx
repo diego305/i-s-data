@@ -12,13 +12,13 @@ interface AnalyticsViewProps {
 export const AnalyticsView: React.FC<AnalyticsViewProps> = ({ interviews, onRefresh }) => {
   if (interviews.length === 0) {
     return (
-      <div className="max-w-4xl mx-auto space-y-6 text-center py-12">
-        <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-xs space-y-4">
-          <div className="text-4xl">📊</div>
-          <h2 className="text-xl font-extrabold text-slate-900">
+      <div className="max-w-4xl mx-auto space-y-6 text-center py-12 font-['Inter']">
+        <div className="bg-white p-8 rounded-2xl border border-[#E4ECF2] shadow-xs space-y-4">
+          <div className="text-3xl">📊</div>
+          <h2 className="text-base font-light text-[#1E252D] font-['Outfit'] tracking-wide">
             No hay datos suficientes para calcular analíticas
           </h2>
-          <p className="text-sm text-slate-500 max-w-md mx-auto">
+          <p className="text-xs sm:text-sm text-slate-500 max-w-md mx-auto">
             Cargue al menos una entrevista o agregue los datos de muestra para visualizar métricas comparativas.
           </p>
           <div className="pt-2">
@@ -27,7 +27,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({ interviews, onRefr
                 seedSampleData();
                 onRefresh();
               }}
-              className="inline-flex items-center gap-2 px-5 py-2.5 bg-sky-600 hover:bg-sky-700 text-white font-bold text-sm rounded-xl transition-colors shadow-xs cursor-pointer"
+              className="inline-flex items-center gap-2 px-5 py-2.5 btn-primary text-xs cursor-pointer"
             >
               <Sprout className="w-4 h-4" />
               Cargar Entrevistas de Ejemplo
@@ -38,14 +38,12 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({ interviews, onRefr
     );
   }
 
-  // Summary Metrics
   const total = interviews.length;
   const scores = interviews.map((i) => i.score_global);
   const avgScore = Math.round((scores.reduce((a, b) => a + b, 0) / total) * 10) / 10;
   const maxScore = Math.max(...scores);
   const minScore = Math.min(...scores);
 
-  // Distribution by level
   const levelCounts: Record<string, number> = {
     "Nivel 1: Inicial / Disperso": 0,
     "Nivel 2: Operativo / Estructurado": 0,
@@ -60,12 +58,11 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({ interviews, onRefr
   });
 
   const levelColors: Record<string, string> = {
-    "Nivel 1: Inicial / Disperso": "#ef4444",
-    "Nivel 2: Operativo / Estructurado": "#f59e0b",
-    "Nivel 3: Avanzado / Preparado": "#10b981"
+    "Nivel 1: Inicial / Disperso": "#EF4444",
+    "Nivel 2: Operativo / Estructurado": "#BFA898",
+    "Nivel 3: Avanzado / Preparado": "#3B8AC4"
   };
 
-  // Distribution by Sector
   const sectorCounts: Record<string, number> = {};
   interviews.forEach((i) => {
     sectorCounts[i.sector] = (sectorCounts[i.sector] || 0) + 1;
@@ -73,7 +70,6 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({ interviews, onRefr
   const sortedSectors = Object.entries(sectorCounts).sort((a, b) => b[1] - a[1]);
   const maxSectorVal = sortedSectors[0]?.[1] || 1;
 
-  // Obstacles count
   const obstacleCounts: Record<string, number> = {};
   interviews.forEach((i) => {
     (i.obstaculos_decision || []).forEach((obs) => {
@@ -83,7 +79,6 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({ interviews, onRefr
   const sortedObstacles = Object.entries(obstacleCounts).sort((a, b) => b[1] - a[1]);
   const maxObsVal = sortedObstacles[0]?.[1] || 1;
 
-  // Priority Process count
   const processCounts: Record<string, number> = {};
   interviews.forEach((i) => {
     const p =
@@ -95,7 +90,6 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({ interviews, onRefr
   const sortedProcesses = Object.entries(processCounts).sort((a, b) => b[1] - a[1]);
   const maxProcVal = sortedProcesses[0]?.[1] || 1;
 
-  // Average dimensions for the portfolio
   const dimSums: DimensionScores = {
     "Almacenamiento y Fuentes": 0,
     "Integración entre Áreas": 0,
@@ -122,84 +116,89 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({ interviews, onRefr
   };
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6 pb-12">
+    <div className="max-w-6xl mx-auto space-y-6 pb-12 font-['Inter']">
       {/* Header */}
       <div>
-        <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight">
-          📊 Analítica de Clientes Relevados
+        <h2 className="text-xl sm:text-2xl font-light text-[#1E252D] tracking-wide flex items-center gap-2 font-['Outfit']">
+          <span>📊</span> Analítica de Clientes Relevados
         </h2>
-        <p className="text-sm text-slate-500 mt-1">
-          Visión panorámica de la madurez de datos, cuellos de botella más comunes y procesos prioritarios del mercado.
+        <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
+          Visión panorámica de la madurez de datos, cuellos de botella y procesos prioritarios del mercado.
         </p>
       </div>
 
       {/* Metric Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center font-bold">
+        <div className="bg-white p-4 rounded-2xl border border-[#E4ECF2] shadow-xs flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-sky-50 text-[#3B8AC4] flex items-center justify-center font-bold">
             <BarChart3 className="w-5 h-5" />
           </div>
           <div>
-            <div className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Total Entrevistas</div>
-            <div className="text-2xl font-extrabold text-slate-900">{total}</div>
+            <div className="text-[11px] font-medium text-slate-400 uppercase tracking-wider font-['Outfit']">Total Entrevistas</div>
+            <div className="text-xl sm:text-2xl font-light text-[#1E252D] font-mono tabular-nums">{total}</div>
           </div>
         </div>
 
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold">
+        <div className="bg-white p-4 rounded-2xl border border-[#E4ECF2] shadow-xs flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-sky-50 text-[#3B8AC4] flex items-center justify-center font-bold">
             <TrendingUp className="w-5 h-5" />
           </div>
           <div>
-            <div className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Score Promedio</div>
-            <div className="text-2xl font-extrabold text-slate-900">{avgScore} <span className="text-xs text-slate-500">pts</span></div>
+            <div className="text-[11px] font-medium text-slate-400 uppercase tracking-wider font-['Outfit']">Score Promedio</div>
+            <div className="text-xl sm:text-2xl font-light text-[#1E252D] font-mono tabular-nums">
+              {avgScore} <span className="text-xs font-sans text-slate-400 font-normal">pts</span>
+            </div>
           </div>
         </div>
 
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
+        <div className="bg-white p-4 rounded-2xl border border-[#E4ECF2] shadow-xs flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-[#FAF7F5] text-[#BFA898] flex items-center justify-center font-bold">
             <Award className="w-5 h-5" />
           </div>
           <div>
-            <div className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Score Máximo</div>
-            <div className="text-2xl font-extrabold text-emerald-700">{maxScore} <span className="text-xs text-slate-500">pts</span></div>
+            <div className="text-[11px] font-medium text-slate-400 uppercase tracking-wider font-['Outfit']">Score Máximo</div>
+            <div className="text-xl sm:text-2xl font-light text-[#1E252D] font-mono tabular-nums">
+              {maxScore} <span className="text-xs font-sans text-slate-400 font-normal">pts</span>
+            </div>
           </div>
         </div>
 
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center font-bold">
+        <div className="bg-white p-4 rounded-2xl border border-[#E4ECF2] shadow-xs flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-slate-50 text-slate-600 flex items-center justify-center font-bold">
             <Zap className="w-5 h-5" />
           </div>
           <div>
-            <div className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Score Mínimo</div>
-            <div className="text-2xl font-extrabold text-rose-700">{minScore} <span className="text-xs text-slate-500">pts</span></div>
+            <div className="text-[11px] font-medium text-slate-400 uppercase tracking-wider font-['Outfit']">Score Mínimo</div>
+            <div className="text-xl sm:text-2xl font-light text-[#1E252D] font-mono tabular-nums">
+              {minScore} <span className="text-xs font-sans text-slate-400 font-normal">pts</span>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Row 1: Distribution by Level & Sectors */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Maturity Donut / Bar breakdown */}
-        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs space-y-4">
-          <h3 className="text-sm font-extrabold text-slate-900">
+        <div className="bg-white p-5 rounded-2xl border border-[#E4ECF2] shadow-xs space-y-4">
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-[#1E252D] font-['Outfit']">
             Distribución de Madurez de Datos
           </h3>
 
           <div className="space-y-3">
             {Object.entries(levelCounts).map(([lvl, count]) => {
               const pct = total > 0 ? Math.round((count / total) * 100) : 0;
-              const color = levelColors[lvl] || "#0284c7";
+              const color = levelColors[lvl] || "#3B8AC4";
               return (
                 <div key={lvl} className="space-y-1">
-                  <div className="flex justify-between text-xs font-semibold text-slate-700">
+                  <div className="flex justify-between text-xs font-medium text-[#1E252D]">
                     <span className="flex items-center gap-2">
                       <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: color }} />
-                      <span>{lvl}</span>
+                      <span className="font-['Outfit']">{lvl}</span>
                     </span>
-                    <span>
+                    <span className="font-mono tabular-nums text-slate-500">
                       {count} ({pct}%)
                     </span>
                   </div>
-                  <div className="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
+                  <div className="w-full bg-[#F5F8FB] border border-[#E4ECF2] rounded-full h-2.5 overflow-hidden">
                     <div
                       className="h-full rounded-full transition-all duration-500"
                       style={{ width: `${pct}%`, backgroundColor: color }}
@@ -210,13 +209,13 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({ interviews, onRefr
             })}
           </div>
 
-          <div className="pt-2 border-t border-slate-100 grid grid-cols-3 text-center text-xs">
+          <div className="pt-2 border-t border-[#E4ECF2] grid grid-cols-3 text-center text-xs">
             {Object.entries(levelCounts).map(([lvl, count]) => (
               <div key={lvl}>
-                <div className="font-extrabold text-sm" style={{ color: levelColors[lvl] }}>
+                <div className="font-light text-base font-mono tabular-nums" style={{ color: levelColors[lvl] }}>
                   {count}
                 </div>
-                <div className="text-[10px] text-slate-500 font-medium truncate">
+                <div className="text-[10px] text-slate-400 font-medium truncate font-['Outfit']">
                   {lvl.split(":")[0]}
                 </div>
               </div>
@@ -225,8 +224,8 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({ interviews, onRefr
         </div>
 
         {/* Sectors horizontal bars */}
-        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs space-y-3">
-          <h3 className="text-sm font-extrabold text-slate-900">
+        <div className="bg-white p-5 rounded-2xl border border-[#E4ECF2] shadow-xs space-y-3">
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-[#1E252D] font-['Outfit']">
             Entrevistas por Sector Económico
           </h3>
 
@@ -235,13 +234,13 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({ interviews, onRefr
               const widthPct = Math.round((count / maxSectorVal) * 100);
               return (
                 <div key={sec} className="space-y-1">
-                  <div className="flex justify-between text-xs font-semibold text-slate-700">
-                    <span className="truncate pr-2">{sec}</span>
-                    <span className="text-sky-700 font-bold">{count}</span>
+                  <div className="flex justify-between text-xs font-medium text-[#1E252D]">
+                    <span className="truncate pr-2 font-['Outfit']">{sec}</span>
+                    <span className="text-[#3B8AC4] font-semibold font-mono tabular-nums">{count}</span>
                   </div>
-                  <div className="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+                  <div className="w-full bg-[#F5F8FB] border border-[#E4ECF2] rounded-full h-2.5 overflow-hidden">
                     <div
-                      className="h-full bg-sky-600 rounded-full transition-all duration-500"
+                      className="h-full bg-[#3B8AC4] rounded-full transition-all duration-500"
                       style={{ width: `${widthPct}%` }}
                     />
                   </div>
@@ -255,8 +254,8 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({ interviews, onRefr
       {/* Row 2: Obstacles & Priority Processes */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Obstacles */}
-        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs space-y-3">
-          <h3 className="text-sm font-extrabold text-slate-900">
+        <div className="bg-white p-5 rounded-2xl border border-[#E4ECF2] shadow-xs space-y-3">
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-[#1E252D] font-['Outfit']">
             Obstáculos Principales para Decidir
           </h3>
           <p className="text-xs text-slate-500">
@@ -268,13 +267,13 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({ interviews, onRefr
               const widthPct = Math.round((count / maxObsVal) * 100);
               return (
                 <div key={obs} className="space-y-1">
-                  <div className="flex justify-between text-xs font-semibold text-slate-800">
+                  <div className="flex justify-between text-xs font-medium text-[#1E252D]">
                     <span className="truncate pr-2">{obs}</span>
-                    <span className="text-rose-700 font-bold">{count} menciones</span>
+                    <span className="text-[#BFA898] font-semibold font-mono tabular-nums">{count} menciones</span>
                   </div>
-                  <div className="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+                  <div className="w-full bg-[#F5F8FB] border border-[#E4ECF2] rounded-full h-2.5 overflow-hidden">
                     <div
-                      className="h-full bg-rose-500 rounded-full transition-all duration-500"
+                      className="h-full bg-[#BFA898] rounded-full transition-all duration-500"
                       style={{ width: `${widthPct}%` }}
                     />
                   </div>
@@ -285,8 +284,8 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({ interviews, onRefr
         </div>
 
         {/* Priority Processes */}
-        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs space-y-3">
-          <h3 className="text-sm font-extrabold text-slate-900">
+        <div className="bg-white p-5 rounded-2xl border border-[#E4ECF2] shadow-xs space-y-3">
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-[#1E252D] font-['Outfit']">
             Procesos Prioritarios para Tablero
           </h3>
           <p className="text-xs text-slate-500">
@@ -298,13 +297,13 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({ interviews, onRefr
               const widthPct = Math.round((count / maxProcVal) * 100);
               return (
                 <div key={proc} className="space-y-1">
-                  <div className="flex justify-between text-xs font-semibold text-slate-800">
+                  <div className="flex justify-between text-xs font-medium text-[#1E252D]">
                     <span className="truncate pr-2">{proc}</span>
-                    <span className="text-indigo-700 font-bold">{count} clientes</span>
+                    <span className="text-[#3B8AC4] font-semibold font-mono tabular-nums">{count} clientes</span>
                   </div>
-                  <div className="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+                  <div className="w-full bg-[#F5F8FB] border border-[#E4ECF2] rounded-full h-2.5 overflow-hidden">
                     <div
-                      className="h-full bg-indigo-500 rounded-full transition-all duration-500"
+                      className="h-full bg-[#3B8AC4] rounded-full transition-all duration-500"
                       style={{ width: `${widthPct}%` }}
                     />
                   </div>
@@ -316,13 +315,13 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({ interviews, onRefr
       </div>
 
       {/* Row 3: Average Portfolio Radar */}
-      <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-xs space-y-4">
+      <div className="bg-white p-6 rounded-2xl border border-[#E4ECF2] shadow-xs space-y-4">
         <div>
-          <h3 className="text-base font-extrabold text-slate-900">
+          <h3 className="text-sm font-light text-[#1E252D] tracking-wide font-['Outfit']">
             Madurez Promedio de la Cartera por Dimensión
           </h3>
           <p className="text-xs text-slate-500 mt-0.5">
-            Desempeño consolidado del portafolio en los 5 ejes clave del diagnóstico de BI.
+            Desempeño consolidado del portafolio en los 5 ejes clave del diagnóstico.
           </p>
         </div>
 
@@ -330,20 +329,20 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({ interviews, onRefr
           <div className="flex justify-center">
             <RadarChart
               dimensiones={avgDimensions}
-              color="#6366f1"
-              fillColor="rgba(99, 102, 241, 0.25)"
+              color="#3B8AC4"
+              fillColor="rgba(59, 138, 196, 0.22)"
               size={320}
             />
           </div>
 
-          <div className="space-y-3">
-            <div className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+          <div className="space-y-2.5">
+            <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider font-['Outfit']">
               Desglose de Promedios Generales
             </div>
             {Object.entries(avgDimensions).map(([dim, val]) => (
-              <div key={dim} className="flex items-center justify-between p-2.5 bg-slate-50 rounded-lg border border-slate-200">
-                <span className="text-xs font-bold text-slate-800">{dim}</span>
-                <span className="text-xs font-extrabold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-md border border-indigo-100">
+              <div key={dim} className="flex items-center justify-between p-2.5 bg-[#F5F8FB] rounded-xl border border-[#E4ECF2]">
+                <span className="text-xs font-medium text-[#1E252D] font-['Outfit']">{dim}</span>
+                <span className="text-xs font-semibold text-[#3B8AC4] font-mono tabular-nums bg-white px-2 py-0.5 rounded-md border border-[#7EBCE6]/30">
                   {val}%
                 </span>
               </div>

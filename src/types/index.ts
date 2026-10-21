@@ -41,6 +41,8 @@ export interface Interview {
   nivel_madurez: string;
   dimensiones: DimensionScores;
   estado: "Completada" | "En Seguimiento" | "Archivada";
+  created_by_uid?: string;
+  created_by_email?: string;
 }
 
 export type InterviewFormData = Omit<Interview, "id" | "created_at" | "updated_at" | "score_global" | "nivel_madurez" | "dimensiones">;

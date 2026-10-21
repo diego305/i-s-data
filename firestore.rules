@@ -1,0 +1,53 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Default deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isValidInterview(data) {
+      return data.empresa is string && data.empresa.size() > 0 && data.empresa.size() <= 200 &&
+             data.responsable_nombre is string && data.responsable_nombre.size() > 0 && data.responsable_nombre.size() <= 200 &&
+             data.score_global is number && data.score_global >= 0 && data.score_global <= 100 &&
+             data.nivel_madurez is string && data.nivel_madurez.size() <= 100;
+    }
+
+    // Colección de entrevistas para colaboración multiusuario
+    match /entrevistas/{entrevistaId} {
+      // Lectura permitida a usuarios autenticados
+      allow read: if isSignedIn();
+
+      // Creación: debe ser usuario autenticado y pasar validaciones
+      allow create: if isSignedIn() &&
+                    isValidId(entrevistaId) &&
+                    isValidInterview(incoming());
+
+      // Modificación: usuario autenticado y validación de campos
+      allow update: if isSignedIn() &&
+                    isValidId(entrevistaId) &&
+                    isValidInterview(incoming());
+
+      // Eliminación: usuario autenticado
+      allow delete: if isSignedIn() && isValidId(entrevistaId);
+    }
+  }
+}

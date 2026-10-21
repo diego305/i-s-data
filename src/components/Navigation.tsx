@@ -7,8 +7,13 @@ import {
   HelpCircle,
   Menu,
   X,
-  Database
+  Cloud,
+  LogIn,
+  LogOut,
+  ChevronRight
 } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
+import { AppSquircleIcon, PropellerLoader } from "./BrandHeader";
 
 export type NavModule =
   | "form"
@@ -21,41 +26,64 @@ interface NavigationProps {
   currentModule: NavModule;
   onSelectModule: (module: NavModule) => void;
   interviewCount: number;
+  isCloudSynced: boolean;
 }
 
 export const Navigation: React.FC<NavigationProps> = ({
   currentModule,
   onSelectModule,
-  interviewCount
+  interviewCount,
+  isCloudSynced
 }) => {
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const { currentUser, login, logout } = useAuth();
+  const [authLoading, setAuthLoading] = React.useState(false);
+
+  const handleLogin = async () => {
+    try {
+      setAuthLoading(true);
+      await login();
+    } catch (err) {
+      console.error("Login failed", err);
+    } finally {
+      setAuthLoading(false);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (err) {
+      console.error("Logout failed", err);
+    }
+  };
 
   const menuItems: { id: NavModule; label: string; icon: React.ReactNode; badge?: string }[] = [
     {
       id: "form",
-      label: "📝 Nueva Entrevista",
-      icon: <FileText className="w-4 h-4 text-sky-600" />
+      label: "Nueva Entrevista",
+      icon: <FileText className="w-4 h-4 text-[#3B8AC4]" />
     },
     {
       id: "proposal",
-      label: "💼 Propuesta de Trabajo",
-      icon: <Briefcase className="w-4 h-4 text-indigo-600" />
+      label: "Propuesta de Trabajo",
+      icon: <Briefcase className="w-4 h-4 text-[#BFA898]" />
     },
     {
       id: "admin",
-      label: "📋 Panel de Administración",
-      icon: <Layers className="w-4 h-4 text-emerald-600" />,
+      label: "Panel de Administración",
+      icon: <Layers className="w-4 h-4 text-[#1E252D]" />,
       badge: interviewCount > 0 ? String(interviewCount) : undefined
     },
     {
       id: "analytics",
-      label: "📊 Analítica de Clientes",
-      icon: <BarChart3 className="w-4 h-4 text-amber-600" />
+      label: "Analítica de Clientes",
+      icon: <BarChart3 className="w-4 h-4 text-[#3B8AC4]" />
     },
     {
       id: "methodology",
-      label: "ℹ️ Matriz & Metodología",
-      icon: <HelpCircle className="w-4 h-4 text-slate-600" />
+      label: "Matriz & Metodología",
+      icon: <HelpCircle className="w-4 h-4 text-slate-500" />
     }
   ];
 
@@ -66,20 +94,22 @@ export const Navigation: React.FC<NavigationProps> = ({
 
   return (
     <>
-      {/* Mobile Top Bar */}
-      <div className="lg:hidden flex items-center justify-between px-4 py-3 bg-white border-b border-slate-200 sticky top-0 z-40">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-sky-600 text-white flex items-center justify-center font-black text-base shadow-xs">
-            📊
-          </div>
+      {/* Mobile Glassmorphic Top Bar */}
+      <div className="lg:hidden flex items-center justify-between px-4 py-3 glass-header sticky top-0 z-40">
+        <div className="flex items-center gap-2.5">
+          <AppSquircleIcon size={34} />
           <div>
-            <div className="text-sm font-extrabold text-slate-900 leading-tight">BI Diagnóstico</div>
-            <div className="text-[11px] text-slate-500 font-medium">I+S Data Solutions</div>
+            <div className="text-xs font-light text-[#1E252D] font-['Outfit'] tracking-wide">
+              Information + Solutions
+            </div>
+            <div className="text-[10px] text-[#BFA898] font-semibold tracking-wider uppercase">
+              Data Solutions
+            </div>
           </div>
         </div>
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="p-2 text-slate-600 hover:text-slate-900 rounded-lg border border-slate-200"
+          className="p-2 text-[#1E252D] hover:bg-white rounded-xl border border-[#E4ECF2] bg-white/70 cursor-pointer transition-colors"
           aria-label="Abrir menú"
         >
           {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -89,67 +119,138 @@ export const Navigation: React.FC<NavigationProps> = ({
       {/* Backdrop */}
       {mobileOpen && (
         <div
-          className="fixed inset-0 bg-slate-900/40 z-40 lg:hidden"
+          className="fixed inset-0 bg-[#1E252D]/40 backdrop-blur-xs z-40 lg:hidden"
           onClick={() => setMobileOpen(false)}
         />
       )}
 
       {/* Sidebar Desktop & Mobile Drawer */}
       <aside
-        className={`fixed top-0 bottom-0 left-0 z-50 w-64 bg-[#f8fafc] border-r border-slate-200 flex flex-col p-4 transition-transform duration-200 ease-in-out lg:translate-x-0 ${
+        className={`fixed top-0 bottom-0 left-0 z-50 w-72 bg-[#F5F8FB] border-r border-[#E4ECF2] flex flex-col p-4 transition-transform duration-200 ease-in-out lg:translate-x-0 ${
           mobileOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         {/* Brand Header */}
-        <div className="pb-4 mb-4 border-b border-slate-200 flex items-center justify-between">
+        <div className="pb-4 mb-4 border-b border-[#E4ECF2] flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <span className="text-2xl p-2 bg-white border border-slate-200 rounded-xl shadow-xs">📊</span>
+            <AppSquircleIcon size={40} />
             <div>
-              <h2 className="text-base font-extrabold text-slate-900 leading-tight tracking-tight">
-                BI Diagnóstico
+              <h2 className="text-sm font-light text-[#1E252D] tracking-wide font-['Outfit']">
+                Information + Solutions
               </h2>
-              <p className="text-xs text-slate-500 font-medium">Relevamiento con Clientes</p>
+              <div className="text-[10px] font-semibold text-[#BFA898] tracking-widest uppercase">
+                Data Solutions
+              </div>
             </div>
           </div>
           <button
             onClick={() => setMobileOpen(false)}
-            className="lg:hidden p-1.5 text-slate-500 hover:text-slate-800 rounded-md"
+            className="lg:hidden p-1.5 text-slate-400 hover:text-slate-700 rounded-lg cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Modules Section */}
+        {/* Cloud Sync & User Profile Card */}
+        <div className="mb-4 bg-white p-3.5 rounded-2xl border border-[#E4ECF2] shadow-[0px_2px_8px_rgba(30,37,45,0.04)]">
+          <div className="flex items-center justify-between mb-2">
+            <span className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-[#1E252D] font-['Outfit']">
+              <Cloud className="w-3.5 h-3.5 text-[#3B8AC4]" />
+              <span>Base Colaborativa</span>
+            </span>
+            <span
+              className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-medium border ${
+                isCloudSynced
+                  ? "bg-sky-50 text-[#3B8AC4] border-[#7EBCE6]/50"
+                  : "bg-[#F5F8FB] text-slate-600 border-[#E4ECF2]"
+              }`}
+            >
+              <span>{isCloudSynced ? "Firestore Cloud" : "Local Caching"}</span>
+            </span>
+          </div>
+
+          {currentUser ? (
+            <div className="pt-2 border-t border-[#E4ECF2] flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2 min-w-0">
+                {currentUser.photoURL ? (
+                  <img
+                    src={currentUser.photoURL}
+                    alt={currentUser.displayName || "Usuario"}
+                    className="w-7 h-7 rounded-full border border-[#7EBCE6] shrink-0 object-cover"
+                  />
+                ) : (
+                  <div className="w-7 h-7 rounded-full bg-sky-50 text-[#3B8AC4] flex items-center justify-center text-xs font-semibold shrink-0">
+                    {currentUser.email ? currentUser.email[0].toUpperCase() : "U"}
+                  </div>
+                )}
+                <div className="min-w-0">
+                  <div className="text-xs font-medium text-[#1E252D] truncate font-['Outfit']">
+                    {currentUser.displayName || "Consultor BI"}
+                  </div>
+                  <div className="text-[10px] text-slate-500 truncate font-mono">
+                    {currentUser.email}
+                  </div>
+                </div>
+              </div>
+              <button
+                onClick={handleLogout}
+                title="Cerrar sesión"
+                className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer shrink-0"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          ) : (
+            <div className="pt-1">
+              <p className="text-[11px] text-slate-500 leading-tight mb-2.5">
+                Acceso con cuenta Google para sincronización multiusuario en vivo.
+              </p>
+              <button
+                onClick={handleLogin}
+                disabled={authLoading}
+                className="w-full flex items-center justify-center gap-1.5 px-3 py-2 btn-primary text-xs cursor-pointer disabled:opacity-50"
+              >
+                {authLoading ? (
+                  <PropellerLoader size={16} />
+                ) : (
+                  <>
+                    <LogIn className="w-3.5 h-3.5" />
+                    <span>Acceso con Google</span>
+                  </>
+                )}
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Modules Navigation */}
         <div className="mb-2">
-          <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider block mb-2 px-2">
-            Módulos:
+          <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-2 px-2 font-['Outfit']">
+            Módulos del Sistema
           </span>
-          <nav className="space-y-1.5">
+          <nav className="space-y-1">
             {menuItems.map((item) => {
               const active = currentModule === item.id;
               return (
                 <button
                   key={item.id}
                   onClick={() => handleSelect(item.id)}
-                  className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${
+                  className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-medium transition-all cursor-pointer ${
                     active
-                      ? "bg-white text-sky-700 border-2 border-sky-600 shadow-xs translate-x-1"
-                      : "bg-white/80 text-slate-700 border border-slate-200 hover:border-sky-300 hover:bg-sky-50/50 hover:text-sky-900 hover:translate-x-0.5"
+                      ? "bg-white text-[#3B8AC4] border border-[#7EBCE6]/50 shadow-xs font-semibold"
+                      : "bg-transparent text-slate-700 hover:bg-white/80 hover:text-[#1E252D]"
                   }`}
                 >
                   <div className="flex items-center gap-2.5 truncate">
-                    <span>{item.label}</span>
+                    {item.icon}
+                    <span className="font-['Inter']">{item.label}</span>
                   </div>
-                  {item.badge && (
-                    <span
-                      className={`text-xs px-2 py-0.5 rounded-full font-bold ${
-                        active
-                          ? "bg-sky-100 text-sky-800"
-                          : "bg-slate-100 text-slate-600"
-                      }`}
-                    >
+                  {item.badge ? (
+                    <span className="text-[11px] font-mono tabular-nums px-2 py-0.5 rounded-md bg-sky-50 text-[#3B8AC4] font-semibold border border-[#7EBCE6]/30">
                       {item.badge}
                     </span>
+                  ) : (
+                    active && <ChevronRight className="w-3.5 h-3.5 text-[#3B8AC4]" />
                   )}
                 </button>
               );
@@ -157,25 +258,21 @@ export const Navigation: React.FC<NavigationProps> = ({
           </nav>
         </div>
 
-        {/* Usage Tips Card */}
+        {/* Footer Philosophy Card */}
         <div className="mt-auto pt-4">
-          <div className="bg-white rounded-xl p-3 border border-slate-200 shadow-xs text-xs text-slate-600">
-            <div className="flex items-center gap-1.5 font-bold text-slate-800 mb-1.5">
-              <span>💡</span>
-              <span>Modos de Uso:</span>
+          <div className="bg-white rounded-2xl p-3.5 border border-[#E4ECF2] shadow-xs text-xs text-slate-600 space-y-1.5">
+            <div className="flex items-center gap-1.5 font-medium text-[#1E252D] text-[11px] font-['Outfit']">
+              <span className="text-[#3B8AC4]">✦</span>
+              <span>Propuesta de Valor I+S</span>
             </div>
-            <ul className="space-y-1 pl-4 list-disc text-slate-600 leading-relaxed text-[11.5px]">
-              <li>En vivo durante llamada / reunión con cliente.</li>
-              <li>Compartido como formulario de evaluación previa.</li>
-            </ul>
+            <p className="text-[11px] text-slate-500 leading-relaxed font-['Inter'] italic">
+              "El valor real no está en acumular datos, sino en saber utilizarlos para decidir mejor."
+            </p>
           </div>
 
-          <div className="mt-3 pt-3 border-t border-slate-200 flex items-center justify-between text-[11px] text-slate-400 font-medium px-1">
-            <span className="flex items-center gap-1">
-              <Database className="w-3 h-3 text-slate-400" />
-              I+S Data Solutions
-            </span>
-            <span>v1.0.0</span>
+          <div className="mt-3 pt-3 border-t border-[#E4ECF2] flex items-center justify-between text-[10.5px] text-slate-400 font-medium px-1">
+            <span>E. Carriego N° 431, La Rioja</span>
+            <span className="font-semibold text-[#BFA898] font-['Outfit']">I+S Data</span>
           </div>
         </div>
       </aside>

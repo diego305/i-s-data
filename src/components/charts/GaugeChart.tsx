@@ -11,19 +11,16 @@ export const GaugeChart: React.FC<GaugeChartProps> = ({
   value,
   max = 100,
   label = "Nivel de Preparación BI",
-  badgeColor = "#0284c7"
+  badgeColor = "#3B8AC4"
 }) => {
   const clampedValue = Math.min(Math.max(value, 0), max);
   const percentage = clampedValue / max;
 
-  // Semicircle gauge: angle from -180 to 0 degrees (or -90 to 90)
-  // Let's use SVG coordinates: Center at (150, 140), radius = 100
   const cx = 150;
   const cy = 135;
   const r = 95;
-  const strokeWidth = 22;
+  const strokeWidth = 20;
 
-  // Polar to Cartesian
   const polarToCartesian = (centerX: number, centerY: number, radius: number, angleInDegrees: number) => {
     const angleInRadians = ((angleInDegrees - 180) * Math.PI) / 180.0;
     return {
@@ -40,24 +37,23 @@ export const GaugeChart: React.FC<GaugeChartProps> = ({
   };
 
   // 3 segments:
-  // 0% - 45% (Red: 0 to 81 deg)
-  // 45% - 75% (Amber: 81 to 135 deg)
-  // 75% - 100% (Green: 135 to 180 deg)
+  // 0 - 45: Initial / Disperso (Red)
+  // 45 - 75: Operativo / Estructurado (Arena Titanio #BFA898)
+  // 75 - 100: Avanzado / Preparado (Aero Blue #3B8AC4)
   const d1 = describeArc(cx, cy, r, 0, 81);
   const d2 = describeArc(cx, cy, r, 81, 135);
   const d3 = describeArc(cx, cy, r, 135, 180);
 
-  // Needle angle: from 0 deg (value 0) to 180 deg (value 100)
   const needleAngle = percentage * 180;
-  const needlePos = polarToCartesian(cx, cy, r - 15, needleAngle);
+  const needlePos = polarToCartesian(cx, cy, r - 12, needleAngle);
 
   return (
-    <div className="flex flex-col items-center justify-center p-3 bg-white rounded-xl border border-slate-200 shadow-xs">
+    <div className="flex flex-col items-center justify-center p-4 bg-white rounded-2xl border border-[#E4ECF2] shadow-xs">
       <svg viewBox="0 0 300 175" className="w-full max-w-[280px] h-auto overflow-visible">
-        {/* Background segments */}
-        <path d={d1} fill="none" stroke="#fee2e2" strokeWidth={strokeWidth} strokeLinecap="round" />
-        <path d={d2} fill="none" stroke="#fef3c7" strokeWidth={strokeWidth} />
-        <path d={d3} fill="none" stroke="#dcfce7" strokeWidth={strokeWidth} strokeLinecap="round" />
+        {/* Track segments */}
+        <path d={d1} fill="none" stroke="#FEE2E2" strokeWidth={strokeWidth} strokeLinecap="round" />
+        <path d={d2} fill="none" stroke="#EFE7E1" strokeWidth={strokeWidth} />
+        <path d={d3} fill="none" stroke="#E0EFF9" strokeWidth={strokeWidth} strokeLinecap="round" />
 
         {/* Dynamic active indicator arc */}
         {percentage > 0 && (
@@ -72,31 +68,31 @@ export const GaugeChart: React.FC<GaugeChartProps> = ({
         )}
 
         {/* Ticks and marks */}
-        <text x="35" y="160" textAnchor="middle" className="text-[11px] font-semibold fill-slate-400">0</text>
-        <text x="110" y="55" textAnchor="middle" className="text-[11px] font-semibold fill-slate-400">45</text>
-        <text x="195" y="55" textAnchor="middle" className="text-[11px] font-semibold fill-slate-400">75</text>
-        <text x="265" y="160" textAnchor="middle" className="text-[11px] font-semibold fill-slate-400">100</text>
+        <text x="35" y="160" textAnchor="middle" className="text-[10px] font-mono tabular-nums font-medium fill-slate-400">0</text>
+        <text x="110" y="55" textAnchor="middle" className="text-[10px] font-mono tabular-nums font-medium fill-slate-400">45</text>
+        <text x="195" y="55" textAnchor="middle" className="text-[10px] font-mono tabular-nums font-medium fill-slate-400">75</text>
+        <text x="265" y="160" textAnchor="middle" className="text-[10px] font-mono tabular-nums font-medium fill-slate-400">100</text>
 
-        {/* Center needle pivot */}
+        {/* Needle with Grafito Hélice #1E252D and Cian Vuelo hub */}
         <line
           x1={cx}
           y1={cy}
           x2={needlePos.x}
           y2={needlePos.y}
-          stroke="#0f172a"
+          stroke="#1E252D"
           strokeWidth="3.5"
           strokeLinecap="round"
           className="transition-all duration-700 ease-out"
         />
-        <circle cx={cx} cy={cy} r="7" fill="#0f172a" />
-        <circle cx={cx} cy={cy} r="3" fill="#ffffff" />
+        <circle cx={cx} cy={cy} r="7" fill="#1E252D" />
+        <circle cx={cx} cy={cy} r="2.5" fill="#7EBCE6" />
       </svg>
 
       <div className="text-center mt-[-10px]">
-        <div className="text-3xl font-extrabold text-slate-900 tracking-tight">
-          {clampedValue} <span className="text-lg font-bold text-slate-500">pts</span>
+        <div className="text-3xl font-light text-[#1E252D] tracking-tight font-mono tabular-nums">
+          {clampedValue} <span className="text-sm font-normal text-slate-400 font-['Inter']">/ 100</span>
         </div>
-        <div className="text-xs font-semibold uppercase tracking-wider text-slate-500 mt-0.5">
+        <div className="text-[11px] font-medium uppercase tracking-wider text-slate-500 mt-0.5 font-['Outfit']">
           {label}
         </div>
       </div>

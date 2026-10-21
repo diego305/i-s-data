@@ -1,0 +1,151 @@
+{
+  "entities": {
+    "Interview": {
+      "title": "Interview",
+      "description": "Relevamiento de diagnóstico de madurez de datos y BI para una empresa cliente.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "number",
+          "description": "Identificador numérico secuencial de la entrevista."
+        },
+        "created_at": {
+          "type": "string",
+          "description": "Fecha y hora de creación de la entrevista."
+        },
+        "updated_at": {
+          "type": "string",
+          "description": "Fecha y hora de última modificación."
+        },
+        "entrevistador": {
+          "type": "string",
+          "description": "Nombre del consultor que realizó el relevamiento.",
+          "maxLength": 100
+        },
+        "responsable_nombre": {
+          "type": "string",
+          "description": "Nombre y apellido del responsable entrevistado.",
+          "maxLength": 150
+        },
+        "responsable_rol": {
+          "type": "string",
+          "description": "Cargo o rol del responsable en la organización.",
+          "maxLength": 150
+        },
+        "empresa": {
+          "type": "string",
+          "description": "Nombre de la empresa u organización cliente.",
+          "maxLength": 150
+        },
+        "sector": {
+          "type": "string",
+          "description": "Sector o actividad principal de la empresa.",
+          "maxLength": 100
+        },
+        "sector_otro": {
+          "type": "string",
+          "description": "Detalle del sector si se seleccionó 'Otro'.",
+          "maxLength": 150
+        },
+        "colaboradores": {
+          "type": "string",
+          "description": "Rango de colaboradores de la empresa.",
+          "maxLength": 50
+        },
+        "almacenamiento_fuentes": {
+          "type": "array",
+          "description": "Lista de fuentes y repositorios actuales de almacenamiento."
+        },
+        "almacenamiento_otro": {
+          "type": "string",
+          "description": "Detalle de almacenamiento si se seleccionó 'Otro'.",
+          "maxLength": 200
+        },
+        "integracion_nivel": {
+          "type": "string",
+          "description": "Calificación del nivel de integración de áreas.",
+          "maxLength": 200
+        },
+        "frecuencia_actualizacion": {
+          "type": "string",
+          "description": "Frecuencia de refresco de los datos clave.",
+          "maxLength": 100
+        },
+        "confianza_datos": {
+          "type": "string",
+          "description": "Nivel de confianza en la consistencia de los datos.",
+          "maxLength": 150
+        },
+        "tiempo_reporte": {
+          "type": "string",
+          "description": "Tiempo dedicado a consolidar reportes de gestión.",
+          "maxLength": 150
+        },
+        "herramienta_visualizacion": {
+          "type": "string",
+          "description": "Herramienta empleada actualmente para indicadores.",
+          "maxLength": 150
+        },
+        "obstaculos_decision": {
+          "type": "array",
+          "description": "Principales obstáculos al tomar decisiones."
+        },
+        "proceso_prioritario": {
+          "type": "string",
+          "description": "Proceso o área prioritaria para implementar el primer tablero.",
+          "maxLength": 150
+        },
+        "proceso_prioritario_otro": {
+          "type": "string",
+          "description": "Detalle del proceso prioritario si se seleccionó 'Otro'.",
+          "maxLength": 200
+        },
+        "valor_esperado": {
+          "type": "string",
+          "description": "Retorno o valor principal esperado de la solución de BI.",
+          "maxLength": 200
+        },
+        "observaciones_consultor": {
+          "type": "string",
+          "description": "Notas y observaciones cualitativas del consultor.",
+          "maxLength": 2000
+        },
+        "score_global": {
+          "type": "number",
+          "description": "Puntaje global ponderado de madurez (0-100)."
+        },
+        "nivel_madurez": {
+          "type": "string",
+          "description": "Nivel de madurez determinado por la matriz oficial.",
+          "maxLength": 100
+        },
+        "dimensiones": {
+          "type": "object",
+          "description": "Desglose de puntajes para cada una de las 5 dimensiones clave."
+        },
+        "estado": {
+          "type": "string",
+          "description": "Estado de la entrevista: Completada, En Seguimiento o Archivada.",
+          "enum": ["Completada", "En Seguimiento", "Archivada"]
+        },
+        "created_by_uid": {
+          "type": "string",
+          "description": "UID del usuario consultor que registró la entrevista."
+        },
+        "created_by_email": {
+          "type": "string",
+          "description": "Email del usuario consultor que registró la entrevista."
+        }
+      },
+      "required": ["empresa", "responsable_nombre", "score_global", "nivel_madurez"]
+    }
+  },
+  "firestore": {
+    "/entrevistas/{entrevistaId}": {
+      "schema": {
+        "$ref": "#/entities/Interview"
+      },
+      "description": "Colección de entrevistas de diagnóstico de madurez de datos compartidas por el equipo."
+    }
+  }
+}

@@ -41,6 +41,7 @@ Herramienta profesional interactiva de Business Intelligence desarrollada en **R
 - **React 19** + **TypeScript**
 - **Vite**
 - **Tailwind CSS v4**
+- **Firebase Firestore & Authentication (Google Sign-In)**: Sincronización colaborativa en tiempo real entre múltiples consultores y dispositivos.
 - **Lucide Icons**
 - **XLSX (SheetJS)** para exportación a Excel
-- **LocalStorage Engine** con sembrado automático y persistencia en el navegador
+- **Capa híbrida de persistencia**: Firestore en la nube con escucha en tiempo real (`onSnapshot`) y caché de contingencia en `localStorage`.
