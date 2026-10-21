@@ -27,18 +27,32 @@ import {
   Clock,
   Plus,
   Cloud,
-  ChevronRight
+  ChevronRight,
+  HardDrive
 } from "lucide-react";
 
 export const FormView: React.FC = () => {
-  const { currentUser } = useAuth();
+  const { currentUser, isGuest, guestUser } = useAuth();
   const [lastSaved, setLastSaved] = useState<Interview | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Form states
-  const [interviewer, setInterviewer] = useState(
-    currentUser?.displayName || currentUser?.email || "Consultor BI"
-  );
+  const [interviewer, setInterviewer] = useState(() => {
+    if (currentUser?.displayName) return currentUser.displayName;
+    if (currentUser?.email) return currentUser.email;
+    if (isGuest) return guestUser?.name || "Consultor Invitado";
+    return "Consultor BI";
+  });
+
+  React.useEffect(() => {
+    if (currentUser?.displayName) {
+      setInterviewer(currentUser.displayName);
+    } else if (currentUser?.email) {
+      setInterviewer(currentUser.email);
+    } else if (isGuest) {
+      setInterviewer(guestUser?.name || "Consultor Invitado");
+    }
+  }, [currentUser, isGuest, guestUser]);
   const [intervieweeName, setIntervieweeName] = useState("");
   const [role, setRole] = useState("");
   const [company, setCompany] = useState("");
@@ -153,10 +167,11 @@ export const FormView: React.FC = () => {
 
     try {
       let savedResult: Interview;
-      if (currentUser) {
+      if (currentUser && !isGuest) {
         savedResult = await saveInterviewFirestore(payload, currentUser);
         saveInterview(payload);
       } else {
+        // Modo Invitado o Local: guarda ÚNICAMENTE en localStorage
         savedResult = saveInterview(payload);
       }
 
@@ -180,14 +195,22 @@ export const FormView: React.FC = () => {
             <div>
               <div className="text-xs sm:text-sm font-semibold text-[#1E252D] flex items-center gap-2 font-['Outfit']">
                 <span>Entrevista registrada y evaluada con éxito</span>
-                {currentUser && (
+                {currentUser && !isGuest ? (
                   <span className="text-[10px] font-semibold text-[#3B8AC4] bg-white border border-[#7EBCE6]/40 px-2 py-0.5 rounded-md flex items-center gap-1">
                     <Cloud className="w-3 h-3" /> Sincronizada en Cloud
+                  </span>
+                ) : isGuest ? (
+                  <span className="text-[10px] font-semibold text-amber-800 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-md flex items-center gap-1">
+                    <HardDrive className="w-3 h-3 text-amber-600" /> Almacenada en Local (Modo Invitado)
+                  </span>
+                ) : (
+                  <span className="text-[10px] font-semibold text-slate-600 bg-white border border-[#E4ECF2] px-2 py-0.5 rounded-md flex items-center gap-1">
+                    <HardDrive className="w-3 h-3 text-slate-500" /> Almacenada en Local
                   </span>
                 )}
               </div>
               <div className="text-xs text-slate-600 mt-0.5 font-['Inter']">
-                Empresa <strong>{lastSaved.empresa}</strong> guardada en la base de datos oficial.
+                Empresa <strong>{lastSaved.empresa}</strong> guardada {isGuest ? "en tu almacenamiento local de prueba." : "en la base de datos oficial."}
               </div>
             </div>
           </div>
@@ -255,10 +278,12 @@ export const FormView: React.FC = () => {
               />
             </div>
             <div className="text-xs text-slate-500 italic sm:pt-4">
-              {currentUser ? (
-                <span>Registrado como: <strong className="font-mono text-[#1E252D]">{currentUser.email}</strong></span>
+              {currentUser && !isGuest ? (
+                <span>Registrado como: <strong className="font-mono text-[#1E252D]">{currentUser.email}</strong> (Cloud)</span>
+              ) : isGuest ? (
+                <span className="text-amber-800 font-medium">Modo Invitado: Guardado exclusivo en tu navegador (<strong className="font-mono text-amber-900">localStorage</strong>)</span>
               ) : (
-                <span>Registro asociado a la auditoría técnica de BI.</span>
+                <span>Registro asociado a la auditoría técnica de BI (Local).</span>
               )}
             </div>
           </div>
@@ -755,10 +780,18 @@ export const FormView: React.FC = () => {
             className="w-full py-3.5 px-6 rounded-xl text-sm font-semibold text-white btn-primary flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
           >
             {isSubmitting ? (
-              <PropellerLoader size={20} text="Guardando en Firestore Cloud..." className="text-white" />
+              <PropellerLoader
+                size={20}
+                text={currentUser && !isGuest ? "Guardando en Firestore Cloud..." : "Guardando en almacenamiento local..."}
+                className="text-white"
+              />
             ) : (
               <>
-                <span>Finalizar Entrevista y Calcular Diagnóstico</span>
+                <span>
+                  {isGuest
+                    ? "Guardar Entrevista (Modo Invitado / Prueba Local)"
+                    : "Finalizar Entrevista y Calcular Diagnóstico"}
+                </span>
                 <ChevronRight className="w-4 h-4" />
               </>
             )}

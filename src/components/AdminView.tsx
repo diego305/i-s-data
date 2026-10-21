@@ -25,7 +25,8 @@ import {
   Award,
   Cloud,
   User as UserIcon,
-  ShieldCheck
+  ShieldCheck,
+  HardDrive
 } from "lucide-react";
 import { OAuthDiagnosticsModal } from "./OAuthDiagnosticsModal";
 
@@ -35,7 +36,7 @@ interface AdminViewProps {
 }
 
 export const AdminView: React.FC<AdminViewProps> = ({ interviews, onRefresh }) => {
-  const { currentUser } = useAuth();
+  const { currentUser, isGuest, guestUser } = useAuth();
   const [selectedIdForReport, setSelectedIdForReport] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterLevel, setFilterLevel] = useState("Todos");
@@ -80,7 +81,7 @@ export const AdminView: React.FC<AdminViewProps> = ({ interviews, onRefresh }) =
             <button
               onClick={async () => {
                 seedSampleData();
-                if (currentUser) {
+                if (currentUser && !isGuest) {
                   await seedSampleDataFirestore();
                 }
                 onRefresh();
@@ -233,7 +234,7 @@ export const AdminView: React.FC<AdminViewProps> = ({ interviews, onRefresh }) =
       estado: editStatus
     };
     updateInterview(editingInterview.id, updates);
-    if (currentUser) {
+    if (currentUser && !isGuest) {
       await updateInterviewFirestore(editingInterview.id, updates);
     }
     setEditingInterview(null);
@@ -243,7 +244,7 @@ export const AdminView: React.FC<AdminViewProps> = ({ interviews, onRefresh }) =
   const handleDeleteConfirm = async () => {
     if (deletingId === null) return;
     deleteInterview(deletingId);
-    if (currentUser) {
+    if (currentUser && !isGuest) {
       await deleteInterviewFirestore(deletingId);
     }
     setDeletingId(null);
@@ -262,12 +263,17 @@ export const AdminView: React.FC<AdminViewProps> = ({ interviews, onRefresh }) =
             Gestión consolidada de clientes, auditorías y sincronización multiusuario.
           </p>
         </div>
-        {currentUser && (
+        {currentUser && !isGuest ? (
           <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-sky-50 text-[#3B8AC4] border border-[#7EBCE6]/40 rounded-xl text-xs font-semibold self-start sm:self-auto font-['Outfit']">
             <Cloud className="w-3.5 h-3.5 text-[#3B8AC4]" />
             <span>Sincronización Cloud Activa</span>
           </div>
-        )}
+        ) : isGuest ? (
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-50 text-amber-800 border border-amber-200 rounded-xl text-xs font-semibold self-start sm:self-auto font-['Outfit']">
+            <HardDrive className="w-3.5 h-3.5 text-amber-600" />
+            <span>Almacenamiento Local (Modo Invitado)</span>
+          </div>
+        ) : null}
       </div>
 
       {/* 4 KPI Metrics */}
@@ -393,7 +399,7 @@ export const AdminView: React.FC<AdminViewProps> = ({ interviews, onRefresh }) =
             <button
               onClick={async () => {
                 seedSampleData();
-                if (currentUser) {
+                if (currentUser && !isGuest) {
                   await seedSampleDataFirestore();
                 }
                 onRefresh();
