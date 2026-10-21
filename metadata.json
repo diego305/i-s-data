@@ -1,0 +1,8 @@
+{
+  "name": "I+S Data Solutions - Diagnóstico de Madurez de Datos & BI",
+  "description": "Herramienta integral de relevamiento para Business Intelligence: diagnóstico de madurez de datos, evaluación automatizada, panel de administración y generación de propuestas a medida.",
+  "permissions": [],
+  "capabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

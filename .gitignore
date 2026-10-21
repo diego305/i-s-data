@@ -1,0 +1,30 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+
+# Environment variables & secrets
+.env
+.env.local
+
+# IDEs
+.vscode/
+.idea/
+
+# Streamlit temporary files
+.streamlit/secrets.toml
+
+# Databases (recreatable via database.py init_db)
+*.db
+*.sqlite3
+
+# Exports
+*.xlsx
+*.csv
+!README.md
