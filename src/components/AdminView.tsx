@@ -24,8 +24,10 @@ import {
   TrendingUp,
   Award,
   Cloud,
-  User as UserIcon
+  User as UserIcon,
+  ShieldCheck
 } from "lucide-react";
+import { OAuthDiagnosticsModal } from "./OAuthDiagnosticsModal";
 
 interface AdminViewProps {
   interviews: Interview[];
@@ -46,6 +48,7 @@ export const AdminView: React.FC<AdminViewProps> = ({ interviews, onRefresh }) =
 
   // Delete confirm modal state
   const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [showDiagnostics, setShowDiagnostics] = useState(false);
 
   if (selectedIdForReport !== null) {
     const item = interviews.find((i) => i.id === selectedIdForReport);
@@ -87,7 +90,15 @@ export const AdminView: React.FC<AdminViewProps> = ({ interviews, onRefresh }) =
               <Sprout className="w-4 h-4" />
               Cargar Entrevistas de Ejemplo
             </button>
+            <button
+              onClick={() => setShowDiagnostics(true)}
+              className="inline-flex items-center gap-2 px-4 py-2.5 bg-white text-[#3B8AC4] border border-[#7EBCE6]/40 rounded-xl text-xs font-semibold cursor-pointer hover:bg-sky-50/50 transition-colors font-['Outfit']"
+            >
+              <ShieldCheck className="w-4 h-4 text-[#3B8AC4]" />
+              Diagnóstico OAuth / Vercel
+            </button>
           </div>
+          <OAuthDiagnosticsModal isOpen={showDiagnostics} onClose={() => setShowDiagnostics(false)} />
         </div>
       </div>
     );
@@ -393,6 +404,14 @@ export const AdminView: React.FC<AdminViewProps> = ({ interviews, onRefresh }) =
               <Sprout className="w-3.5 h-3.5 text-[#3B8AC4]" />
               Sembrar Datos Demo
             </button>
+            <button
+              onClick={() => setShowDiagnostics(true)}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-[#3B8AC4] bg-sky-50/60 border border-[#7EBCE6]/40 rounded-xl hover:bg-sky-50 transition-colors shadow-2xs cursor-pointer font-['Outfit']"
+              title="Verificar configuración de OAuth, dominios autorizados y variables de Vercel"
+            >
+              <ShieldCheck className="w-3.5 h-3.5 text-[#3B8AC4]" />
+              Diagnóstico OAuth / Vercel
+            </button>
           </div>
         </div>
       </div>
@@ -570,6 +589,12 @@ export const AdminView: React.FC<AdminViewProps> = ({ interviews, onRefresh }) =
           </div>
         </div>
       )}
+
+      {/* OAuth & Vercel Diagnostics Modal */}
+      <OAuthDiagnosticsModal
+        isOpen={showDiagnostics}
+        onClose={() => setShowDiagnostics(false)}
+      />
     </div>
   );
 };

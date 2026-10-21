@@ -16,13 +16,106 @@ import { Interview, InterviewFormData } from "../types";
 import { evaluarDiagnostico } from "./scoring";
 import { SAMPLE_INTERVIEWS_SEED } from "./storage";
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+// Support both static json and Vercel VITE_* environment variables
+export const effectiveFirebaseConfig = {
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || firebaseConfig.projectId,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || firebaseConfig.appId,
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || firebaseConfig.apiKey,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || firebaseConfig.authDomain,
+  firestoreDatabaseId: import.meta.env.VITE_FIREBASE_DATABASE_ID || firebaseConfig.firestoreDatabaseId,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || firebaseConfig.storageBucket,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || firebaseConfig.messagingSenderId,
+};
 
-// CRITICAL: Must use firestoreDatabaseId from firebase-applet-config.json
-export const db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
+// Initialize Firebase
+const app = initializeApp(effectiveFirebaseConfig);
+
+// CRITICAL: Must use firestoreDatabaseId from config
+export const db = getFirestore(app, effectiveFirebaseConfig.firestoreDatabaseId);
 export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();
+
+export interface AuthDiagnosticError {
+  code: string;
+  originalMessage: string;
+  title: string;
+  explanation: string;
+  solution: string;
+  actionUrl?: string;
+  actionLabel?: string;
+}
+
+export function parseAuthError(err: any): AuthDiagnosticError {
+  const code = err?.code || "unknown";
+  const rawMessage = err?.message || String(err);
+  const currentHost = typeof window !== "undefined" ? window.location.hostname : "";
+
+  switch (code) {
+    case "auth/unauthorized-domain":
+      return {
+        code,
+        originalMessage: rawMessage,
+        title: "Dominio no autorizado en Firebase (Vercel)",
+        explanation: `El dominio '${currentHost}' no está autorizado en Firebase Authentication. Google y Firebase bloquean la autenticación si el dominio no está en la lista blanca.`,
+        solution: `Ingresa en Firebase Console > Authentication > Settings > Dominios autorizados (Authorized domains) y agrega '${currentHost}'.`,
+        actionUrl: `https://console.firebase.google.com/project/${effectiveFirebaseConfig.projectId}/authentication/settings`,
+        actionLabel: "Abrir Ajustes de Firebase Console"
+      };
+    case "auth/popup-blocked":
+      return {
+        code,
+        originalMessage: rawMessage,
+        title: "Ventana emergente bloqueada por el navegador",
+        explanation: "Tu navegador o bloqueador de anuncios cerró preventivamente la ventana emergente de Google OAuth.",
+        solution: "Habilita las ventanas emergentes (popups) en la barra de direcciones de tu navegador para este sitio y vuelve a intentarlo."
+      };
+    case "auth/popup-closed-by-user":
+      return {
+        code,
+        originalMessage: rawMessage,
+        title: "Ventana cerrada antes de completar el inicio de sesión",
+        explanation: "La ventana de Google se cerró antes de que pudieras seleccionar o autorizar tu cuenta.",
+        solution: "Haz clic nuevamente en 'Acceso con Google' y selecciona tu cuenta para continuar."
+      };
+    case "auth/operation-not-allowed":
+      return {
+        code,
+        originalMessage: rawMessage,
+        title: "Proveedor Google deshabilitado en Firebase",
+        explanation: "El proveedor Google no está activado en la consola de Firebase para este proyecto.",
+        solution: "En Firebase Console ve a Authentication > Sign-in method > Google y asegúrate de habilitarlo.",
+        actionUrl: `https://console.firebase.google.com/project/${effectiveFirebaseConfig.projectId}/authentication/providers`,
+        actionLabel: "Habilitar Google en Firebase"
+      };
+    case "auth/invalid-api-key":
+      return {
+        code,
+        originalMessage: rawMessage,
+        title: "API Key de Firebase no configurada o inválida",
+        explanation: "La variable VITE_FIREBASE_API_KEY no se encontró o contiene caracteres incorrectos en Vercel.",
+        solution: "En Vercel ve a Settings > Environment Variables y añade VITE_FIREBASE_API_KEY con la clave de tu proyecto."
+      };
+    default:
+      if (rawMessage.toLowerCase().includes("access_denied") || rawMessage.includes("403")) {
+        return {
+          code: "oauth/access_denied",
+          originalMessage: rawMessage,
+          title: "Acceso denegado (App en modo de prueba en Google Cloud)",
+          explanation: "La pantalla de consentimiento de OAuth está en estado 'Testing'. Solo los correos registrados como 'Usuarios de prueba' pueden iniciar sesión.",
+          solution: "Agrega tu correo en Google Cloud Console > APIs & Services > OAuth consent screen > Test users, o publica la app.",
+          actionUrl: "https://console.cloud.google.com/apis/credentials/consent",
+          actionLabel: "Ir a Pantalla de consentimiento en Google Cloud"
+        };
+      }
+      return {
+        code,
+        originalMessage: rawMessage,
+        title: "Error al iniciar sesión con Google",
+        explanation: rawMessage,
+        solution: "Revisa la consola de desarrollo del navegador (F12) o los logs de Vercel para identificar el detalle técnico."
+      };
+  }
+}
 
 export enum OperationType {
   CREATE = "create",

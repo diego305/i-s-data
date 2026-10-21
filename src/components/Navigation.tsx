@@ -10,7 +10,9 @@ import {
   Cloud,
   LogIn,
   LogOut,
-  ChevronRight
+  ChevronRight,
+  AlertTriangle,
+  ExternalLink
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { AppSquircleIcon, PropellerLoader } from "./BrandHeader";
@@ -36,7 +38,7 @@ export const Navigation: React.FC<NavigationProps> = ({
   isCloudSynced
 }) => {
   const [mobileOpen, setMobileOpen] = React.useState(false);
-  const { currentUser, login, logout } = useAuth();
+  const { currentUser, login, logout, authError, clearAuthError } = useAuth();
   const [authLoading, setAuthLoading] = React.useState(false);
 
   const handleLogin = async () => {
@@ -96,13 +98,13 @@ export const Navigation: React.FC<NavigationProps> = ({
     <>
       {/* Mobile Glassmorphic Top Bar */}
       <div className="lg:hidden flex items-center justify-between px-4 py-3 glass-header sticky top-0 z-40">
-        <div className="flex items-center gap-2.5">
-          <AppSquircleIcon size={34} />
+        <div className="flex items-center gap-3">
+          <AppSquircleIcon size={38} />
           <div>
-            <div className="text-xs font-light text-[#1E252D] font-['Outfit'] tracking-wide">
+            <div className="text-xs font-semibold text-[#1E252D] font-['Outfit'] tracking-tight leading-tight">
               Information + Solutions
             </div>
-            <div className="text-[10px] text-[#BFA898] font-semibold tracking-wider uppercase">
+            <div className="text-[10px] text-[#2C6E9E] font-bold tracking-wider uppercase font-['Outfit'] mt-0.5">
               Data Solutions
             </div>
           </div>
@@ -133,12 +135,12 @@ export const Navigation: React.FC<NavigationProps> = ({
         {/* Brand Header */}
         <div className="pb-4 mb-4 border-b border-[#E4ECF2] flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <AppSquircleIcon size={40} />
+            <AppSquircleIcon size={42} />
             <div>
-              <h2 className="text-sm font-light text-[#1E252D] tracking-wide font-['Outfit']">
+              <h2 className="text-sm font-semibold text-[#1E252D] tracking-tight font-['Outfit'] leading-tight">
                 Information + Solutions
               </h2>
-              <div className="text-[10px] font-semibold text-[#BFA898] tracking-widest uppercase">
+              <div className="text-[10px] font-normal text-[#2C6E9E] tracking-widest uppercase font-['Outfit'] mt-0.5">
                 Data Solutions
               </div>
             </div>
@@ -219,6 +221,41 @@ export const Navigation: React.FC<NavigationProps> = ({
                   </>
                 )}
               </button>
+
+              {authError && (
+                <div className="mt-2.5 p-2.5 bg-amber-50 border border-amber-200 rounded-xl text-left text-xs space-y-1.5 animate-fadeIn">
+                  <div className="flex items-start justify-between gap-1">
+                    <div className="flex items-center gap-1.5 text-amber-900 font-semibold text-[11px] font-['Outfit']">
+                      <AlertTriangle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                      <span>{authError.title}</span>
+                    </div>
+                    <button
+                      onClick={clearAuthError}
+                      className="text-amber-500 hover:text-amber-800 p-0.5 cursor-pointer"
+                      title="Cerrar"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </div>
+                  <p className="text-[10.5px] text-amber-800 leading-tight">
+                    {authError.explanation}
+                  </p>
+                  <div className="pt-1 border-t border-amber-200/60 text-[10px] text-amber-900">
+                    <span className="font-semibold">Solución:</span> {authError.solution}
+                  </div>
+                  {authError.actionUrl && (
+                    <a
+                      href={authError.actionUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 text-[10px] text-[#3B8AC4] hover:text-[#2C6E9E] font-medium underline mt-0.5"
+                    >
+                      <span>{authError.actionLabel || "Abrir Consola"}</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  )}
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -270,9 +307,9 @@ export const Navigation: React.FC<NavigationProps> = ({
             </p>
           </div>
 
-          <div className="mt-3 pt-3 border-t border-[#E4ECF2] flex items-center justify-between text-[10.5px] text-slate-400 font-medium px-1">
+          <div className="mt-3 pt-3 border-t border-[#E4ECF2] flex items-center justify-between text-[10.5px] text-slate-500 font-medium px-1">
             <span>E. Carriego N° 431, La Rioja</span>
-            <span className="font-semibold text-[#BFA898] font-['Outfit']">I+S Data</span>
+            <span className="font-bold text-[#2C6E9E] font-['Outfit']">I+S Data</span>
           </div>
         </div>
       </aside>

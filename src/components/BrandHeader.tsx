@@ -2,41 +2,50 @@ import React from "react";
 
 /**
  * App Icon: Squircle container with Aero Blue (#3B8AC4) to deep blue (#1E5E94) gradient
- * and crisp white 4-blade aerodynamic propeller.
+ * and crisp white 4-blade aerodynamic propeller with guaranteed rendering.
  */
 export const AppSquircleIcon: React.FC<{ size?: number; className?: string }> = ({
   size = 40,
   className = ""
 }) => {
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 48 48"
-      className={`shrink-0 ${className}`}
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <defs>
-        <linearGradient id="appSquircleGrad" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#3B8AC4" />
-          <stop offset="100%" stopColor="#1E5E94" />
-        </linearGradient>
-      </defs>
-      {/* Aerodynamic squircle */}
-      <rect width="48" height="48" rx="12" fill="url(#appSquircleGrad)" />
+  const radius = Math.round(size * 0.28);
+  const iconSize = Math.round(size * 0.62);
 
-      {/* Aerodynamic white propeller cross */}
-      <g fill="#FFFFFF">
-        {/* Vertical blade */}
-        <path d="M24 7C22.6 13.5 22.6 19.5 22.6 24C22.6 28.5 22.6 34.5 24 41C25.4 34.5 25.4 28.5 25.4 24C25.4 19.5 25.4 13.5 24 7Z" />
-        {/* Horizontal blade */}
-        <path d="M7 24C13.5 22.6 19.5 22.6 24 22.6C28.5 22.6 34.5 22.6 41 24C34.5 25.4 28.5 25.4 24 25.4C19.5 25.4 13.5 25.4 7 24Z" />
-        {/* Hub */}
-        <circle cx="24" cy="24" r="2.8" fill="#7EBCE6" />
-        <circle cx="24" cy="24" r="1.3" fill="#FFFFFF" />
-      </g>
-    </svg>
+  return (
+    <div
+      style={{
+        width: size,
+        height: size,
+        borderRadius: radius,
+        background: "linear-gradient(135deg, #3B8AC4 0%, #1E5E94 100%)",
+        boxShadow: "0px 3px 10px rgba(59, 138, 196, 0.35)"
+      }}
+      className={`shrink-0 flex items-center justify-center border border-white/25 select-none ${className}`}
+      aria-label="Isotipo I+S"
+    >
+      <svg
+        width={iconSize}
+        height={iconSize}
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        className="overflow-visible"
+      >
+        {/* Vertical aerodynamic propeller blade */}
+        <path
+          d="M12 2C11.3 5.5 11.3 8.5 11.3 12C11.3 15.5 11.3 18.5 12 22C12.7 18.5 12.7 15.5 12.7 12C12.7 8.5 12.7 5.5 12 2Z"
+          fill="#FFFFFF"
+        />
+        {/* Horizontal aerodynamic propeller blade */}
+        <path
+          d="M2 12C5.5 11.3 8.5 11.3 12 11.3C15.5 11.3 18.5 11.3 22 12C18.5 12.7 15.5 12.7 12 12.7C8.5 12.7 5.5 12.7 2 12Z"
+          fill="#FFFFFF"
+        />
+        {/* Aerodynamic center hub */}
+        <circle cx="12" cy="12" r="2.5" fill="#7EBCE6" />
+        <circle cx="12" cy="12" r="1.1" fill="#FFFFFF" />
+      </svg>
+    </div>
   );
 };
 
@@ -168,21 +177,21 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
         <circle cx="75" cy="40" r="3.5" fill="#3B8AC4" />
         <circle cx="75" cy="40" r="1.5" fill="#FFFFFF" />
 
-        {/* The 'S': Arena Titanio (#BFA898) */}
+        {/* The 'S': Warm Bronze Titanium with high contrast against light surfaces */}
         <text
           x="122"
           y="56"
           fontFamily="'Outfit', sans-serif"
-          fontWeight="400"
+          fontWeight="500"
           fontSize="48"
-          fill="#BFA898"
+          fill="#8F735F"
           letterSpacing="0"
         >
           S
         </text>
 
         {/* Reflection */}
-        <g opacity="0.12" transform="scale(1, -0.38) translate(0, -170)">
+        <g opacity="0.16" transform="scale(1, -0.38) translate(0, -170)">
           <rect x="18" y="14" width="7" height="40" rx="2" fill="#3B8AC4" />
           <ellipse cx="75" cy="40" rx="3.5" ry="20" fill="#1E252D" />
           <ellipse cx="75" cy="40" rx="20" ry="3.5" fill="#1E252D" />
@@ -190,9 +199,9 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
             x="122"
             y="56"
             fontFamily="'Outfit', sans-serif"
-            fontWeight="400"
+            fontWeight="500"
             fontSize="48"
-            fill="#BFA898"
+            fill="#8F735F"
           >
             S
           </text>
@@ -201,10 +210,10 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
 
       {withText && (
         <div className="flex flex-col leading-none">
-          <span className="text-sm font-light tracking-wide text-[#1E252D] font-['Outfit']">
+          <span className="text-sm font-semibold tracking-tight text-[#1E252D] font-['Outfit']">
             Information + Solutions
           </span>
-          <span className="text-[10px] font-semibold text-[#BFA898] tracking-widest uppercase mt-0.5">
+          <span className="text-[10px] font-semibold text-[#2C6E9E] tracking-widest uppercase mt-0.5 font-['Outfit']">
             Data Solutions
           </span>
         </div>
